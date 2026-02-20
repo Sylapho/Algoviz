@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlgoViz — Visualiseur d'Algorithmes</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-name">Algo<span>Viz</span></div>
+      <div class="brand-badge">v2.0</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="theme-toggle" id="themeToggle">☀ Mode clair</button>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-view="sort">⬛ Tri</button>
+        <button class="nav-tab" data-view="graph">⬡ Graphes</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════ SORT VIEW ═══════════════ -->
+  <div class="app visible" id="sortApp">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Algorithmes lents</div>
+        <button class="algo-btn active" data-algo="bubble">Tri à Bulles <span class="badge">O(n²)</span></button>
+        <button class="algo-btn" data-algo="selection">Tri Sélection <span class="badge">O(n²)</span></button>
+        <button class="algo-btn" data-algo="insertion">Tri Insertion <span class="badge">O(n²)</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Algorithmes rapides</div>
+        <button class="algo-btn" data-algo="merge">Tri Fusion <span class="badge">O(n log n)</span></button>
+        <button class="algo-btn" data-algo="quick">Tri Rapide <span class="badge">O(n log n)</span></button>
+        <button class="algo-btn" data-algo="heap">Tri par Tas <span class="badge">O(n log n)</span></button>
+        <button class="algo-btn" data-algo="radix">Tri Radix <span class="badge">O(nk)</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="ctrl-group">
+          <div class="ctrl-row">
+            <div class="ctrl-label">Taille <span class="ctrl-val" id="sizeVal">50</span></div>
+            <div class="slider-row">
+              <input type="range" id="sizeSlider" min="10" max="120" value="50">
+              <input type="number" class="num-input" id="sizeInput" min="10" max="120" value="50">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Vitesse <span class="ctrl-val" id="speedVal">×5</span></div>
+            <div class="slider-row">
+              <input type="range" id="speedSlider" min="1" max="10" value="5">
+              <input type="number" class="num-input" id="speedInput" min="1" max="10" value="5">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="btn-row">
+          <button class="btn" id="sortResetBtn">↺ Reset</button>
+          <button class="btn primary" id="sortStartBtn">▶ Start</button>
+        </div>
+        <div style="height:0.5rem"></div>
+        <div class="btn-row">
+          <button class="btn stop" id="sortStopBtn" disabled>■ Stop</button>
+          <button class="btn" id="sortShuffleBtn">⇌ Mélanger</button>
+        </div>
+      </div>
+      <div class="sidebar-section" style="flex:1">
+        <div class="info-card" id="sortInfo"><strong>Tri à Bulles</strong> — Compare les éléments adjacents et les
+          échange si nécessaire. Répète jusqu'à ce que le tableau soit trié.</div>
+      </div>
+    </div>
+    <div class="sort-area">
+      <div class="viz-header">
+        <div class="viz-title">// visualisation en temps réel</div>
+        <div class="stat-pills">
+          <div class="stat-pill cmp">
+            <div class="stat-pill-val" id="compCount">0</div>
+            <div class="stat-pill-label">Comparaisons</div>
+          </div>
+          <div class="stat-pill swp">
+            <div class="stat-pill-val" id="swapCount">0</div>
+            <div class="stat-pill-label">Échanges</div>
+          </div>
+          <div class="stat-pill ms">
+            <div class="stat-pill-val" id="msCount">—</div>
+            <div class="stat-pill-label">ms</div>
+          </div>
+        </div>
+      </div>
+      <div class="bars-wrap" id="barsWrap"></div>
+      <div class="status-bar">
+        <div class="status-dot" id="sortStatusDot"></div>
+        <div class="status-msg" id="sortStatusMsg">Prêt — Appuie sur Start</div>
+        <div class="legend">
+          <div class="leg">
+            <div class="leg-dot" style="background:#ff3366"></div>Comp.
+          </div>
+          <div class="leg">
+            <div class="leg-dot" style="background:#3344ff"></div>Trié
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ GRAPH VIEW ═══════════════ -->
+  <div class="app" id="graphApp">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Algorithme</div>
+        <button class="algo-btn active" data-galgo="bfs">BFS <span class="badge">O(V+E)</span></button>
+        <button class="algo-btn" data-galgo="dfs">DFS <span class="badge">O(V+E)</span></button>
+        <button class="algo-btn" data-galgo="dijkstra">Dijkstra <span class="badge">O(E log V)</span></button>
+        <button class="algo-btn" data-galgo="astar">A* <span class="badge">O(E log V)</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="ctrl-group">
+          <div class="ctrl-row">
+            <div class="ctrl-label">Taille grille <span class="ctrl-val" id="gridSizeVal">20</span></div>
+            <div class="slider-row">
+              <input type="range" id="gridSizeSlider" min="10" max="35" value="20">
+              <input type="number" class="num-input" id="gridSizeInput" min="10" max="35" value="20">
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label">Vitesse <span class="ctrl-val" id="gSpeedVal">×5</span></div>
+            <div class="slider-row">
+              <input type="range" id="gSpeedSlider" min="1" max="10" value="5">
+              <input type="number" class="num-input" id="gSpeedInput" min="1" max="10" value="5">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="wall-info">
+          🟩 Départ &nbsp; 🟥 Arrivée<br>
+          🖱️ Clic + glisser pour murs<br>
+          <span style="color:var(--a4)">Shift+Clic</span> pour déplacer départ/arrivée
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="btn-row">
+          <button class="btn" id="graphResetBtn">↺ Reset</button>
+          <button class="btn primary" id="graphStartBtn">▶ Start</button>
+        </div>
+        <div style="height:0.5rem"></div>
+        <div class="btn-row">
+          <button class="btn stop" id="graphStopBtn" disabled>■ Stop</button>
+          <button class="btn full" id="genMazeBtn">⊞ Labyrinthe</button>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="graph-stat">Nœuds visités: <span id="nodesVisited">0</span></div>
+        <div class="graph-stat" style="margin-top:0.4rem">Longueur chemin: <span id="pathLen">—</span></div>
+      </div>
+      <div class="sidebar-section" style="flex:1">
+        <div class="info-card" id="graphInfo"><strong>BFS</strong> — Parcours en largeur. Explore les voisins couche par
+          couche. Garantit le chemin le plus court sur graphe non pondéré.</div>
+      </div>
+    </div>
+    <div class="graph-area">
+      <div class="viz-header">
+        <div class="viz-title">// grille interactive — clique pour dessiner des murs</div>
+      </div>
+      <div class="graph-canvas-wrap">
+        <canvas id="graphCanvas"></canvas>
+      </div>
+      <div class="status-bar">
+        <div class="status-dot" id="graphStatusDot"></div>
+        <div class="status-msg" id="graphStatusMsg">Prêt — Dessine des murs puis clique Start</div>
+        <div class="legend">
+          <div class="leg">
+            <div class="leg-dot" style="background:#3344ff"></div>Exploré
+          </div>
+          <div class="leg">
+            <div class="leg-dot" style="background:#ffaa00"></div>Chemin
+          </div>
+          <div class="leg">
+            <div class="leg-dot" style="background:#ff3366"></div>Front.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

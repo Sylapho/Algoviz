@@ -12,6 +12,7 @@
 </head>
 
 <body>
+
   <header>
     <div class="brand">
       <div class="brand-name">Algo<span>Viz</span></div>
@@ -82,11 +83,11 @@
         <div class="stat-pills">
           <div class="stat-pill cmp">
             <div class="stat-pill-val" id="compCount">0</div>
-            <div class="stat-pill-label">Comparaisons</div>
+            <div class="stat-pill-label">Comp.</div>
           </div>
           <div class="stat-pill swp">
             <div class="stat-pill-val" id="swapCount">0</div>
-            <div class="stat-pill-label">Échanges</div>
+            <div class="stat-pill-label">Éch.</div>
           </div>
           <div class="stat-pill ms">
             <div class="stat-pill-val" id="msCount">—</div>
@@ -145,7 +146,7 @@
         </div>
       </div>
       <div class="sidebar-section">
-        <div class="wall-info">
+        <div class="wall-info desktop-only">
           🟩 Départ &nbsp; 🟥 Arrivée<br>
           🖱️ Clic + glisser pour murs<br>
           <span class="shift-hint">Shift+Clic</span> pour déplacer départ/arrivée
@@ -174,6 +175,13 @@
     <div class="graph-area">
       <div class="viz-header">
         <div class="viz-title">// grille interactive — clique pour dessiner des murs</div>
+      </div>
+      <!-- Barre d'outils mobile -->
+      <div class="mobile-toolbar" id="mobileToolbar">
+        <button class="tool-btn active" data-tool="wall">🧱 Mur</button>
+        <button class="tool-btn" data-tool="erase">🧹 Gomme</button>
+        <button class="tool-btn" data-tool="start">🟩 Départ</button>
+        <button class="tool-btn" data-tool="end">🟥 Arrivée</button>
       </div>
       <div class="graph-canvas-wrap">
         <canvas id="graphCanvas"></canvas>

@@ -18,6 +18,7 @@ let endCell = { r: 17, c: 17 };
 let isDrawing = false;
 let drawMode = 'wall'; // wall or erase
 let movingStart = false, movingEnd = false;
+let mobileTool = 'wall'; // wall | erase | start | end
 let graphDelay = 20;
 
 // ═══════════════════════════════════════════════════════
@@ -508,6 +509,38 @@ function getCellFromEvent(e) {
     return { r, c };
 }
 
+function isMobile() { return window.innerWidth <= 640; }
+
+function applyToolAt(cell) {
+    if (!cell) return;
+    if (isMobile()) {
+        if (mobileTool === 'start') {
+            grid[startCell.r][startCell.c] = CELL.EMPTY;
+            startCell = { ...cell };
+            grid[cell.r][cell.c] = CELL.START;
+            drawGrid(); return;
+        }
+        if (mobileTool === 'end') {
+            grid[endCell.r][endCell.c] = CELL.EMPTY;
+            endCell = { ...cell };
+            grid[cell.r][cell.c] = CELL.END;
+            drawGrid(); return;
+        }
+        const mode = mobileTool === 'erase' ? 'erase' : 'wall';
+        if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
+            grid[cell.r][cell.c] = mode === 'wall' ? CELL.WALL : CELL.EMPTY;
+            drawGrid();
+        }
+    } else {
+        if (!isDrawing) return;
+        if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
+            grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
+            drawGrid();
+        }
+    }
+}
+
+// Mouse events (desktop)
 canvas.addEventListener('mousedown', e => {
     if (graphRunning) return;
     const cell = getCellFromEvent(e);
@@ -542,14 +575,46 @@ canvas.addEventListener('mousemove', e => {
         grid[cell.r][cell.c] = CELL.END;
         drawGrid(); return;
     }
-    if (!isDrawing) return;
-    if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
-        grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
-        drawGrid();
-    }
+    applyToolAt(cell);
 });
 
 window.addEventListener('mouseup', () => { isDrawing = false; movingStart = false; movingEnd = false; });
+
+// Touch events (mobile)
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (graphRunning) return;
+    const cell = getCellFromEvent(e);
+    if (!cell) return;
+    if (isMobile()) {
+        // Sur mobile, un tap simple applique l'outil sélectionné
+        applyToolAt(cell);
+        isDrawing = true;
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (graphRunning || !isDrawing) return;
+    const cell = getCellFromEvent(e);
+    if (!cell) return;
+    // En mode départ/arrivée, le glissement déplace aussi
+    applyToolAt(cell);
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    isDrawing = false;
+}, { passive: false });
+
+// Mobile toolbar
+document.querySelectorAll('.tool-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        mobileTool = btn.dataset.tool;
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
 
 // Graph algorithms helpers
 const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
@@ -898,6 +963,10 @@ document.getElementById('genMazeBtn').addEventListener('click', () => {
     graphRunning = false; graphPaused = false;
     if (graphResumeResolve) { graphResumeResolve(); graphResumeResolve = null; }
     setGraphBtn('start');
+    // Sur mobile, réduire la grille à une taille optimale pour le tactile
+    if (isMobile() && ROWS > 15) {
+        applyGridSize(13);
+    }
     generateMaze();
 });
 function applyGridSize(v) {

@@ -338,7 +338,16 @@ function sortResume() {
 // Sort controls
 document.querySelectorAll('[data-algo]').forEach(btn => {
     btn.addEventListener('click', () => {
-        if (sortRunning) return;
+        if (sortRunning && !sortPaused) return;
+        // Reset pause state if we were paused
+        if (sortPaused) {
+            sortPaused = false;
+            if (sortResumeResolve) { sortResumeResolve(); sortResumeResolve = null; }
+            setSortBtn('start');
+            document.getElementById('sortStopBtn').disabled = true;
+            document.getElementById('sortResetBtn').disabled = false;
+            document.getElementById('sortShuffleBtn').disabled = false;
+        }
         document.querySelectorAll('[data-algo]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentSortAlgo = btn.dataset.algo;
@@ -844,7 +853,21 @@ async function generateMaze() {
 // Graph controls
 document.querySelectorAll('[data-galgo]').forEach(btn => {
     btn.addEventListener('click', () => {
-        if (graphRunning) return;
+        if (graphRunning && !graphPaused) return;
+        // Reset pause state if we were paused
+        if (graphPaused) {
+            graphPaused = false;
+            if (graphResumeResolve) { graphResumeResolve(); graphResumeResolve = null; }
+            setGraphBtn('start');
+            document.getElementById('graphStopBtn').disabled = true;
+            document.getElementById('graphResetBtn').disabled = false;
+            document.getElementById('genMazeBtn').disabled = false;
+            // Clear visited cells
+            for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++)
+                if (grid[r][c] === CELL.VISITED || grid[r][c] === CELL.FRONTIER || grid[r][c] === CELL.PATH) grid[r][c] = CELL.EMPTY;
+            drawGrid();
+            setGStatus('graphStatusDot', 'graphStatusMsg', '', 'Prêt — Appuie sur Start');
+        }
         document.querySelectorAll('[data-galgo]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentGAlgo = btn.dataset.galgo;

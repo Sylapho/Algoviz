@@ -661,6 +661,36 @@ canvas#graphCanvas {
   background: #3344ff
 }
 
+/* Long press feedback */
+.long-press-ring {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0;
+  transform: scale(0.3);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  width: 36px;
+  height: 36px;
+  margin-left: -18px;
+  margin-top: -18px;
+}
+
+.long-press-ring.active {
+  opacity: 1;
+  transform: scale(1)
+}
+
+.mobile-hint {
+  display: none
+}
+
+@media (max-width:640px) {
+  .mobile-hint {
+    display: inline
+  }
+}
+
 /* Theme toggle */
 .theme-toggle {
   background: none;
@@ -722,38 +752,6 @@ canvas#graphCanvas {
 :root.light .btn.primary:hover {
   box-shadow: 0 0 16px rgba(0, 122, 68, 0.25)
 }
-
-/* Mobile toolbar (hidden on desktop) */
-.mobile-toolbar {
-  display: none;
-  gap: 0.4rem;
-  padding: 0.5rem 0;
-  flex-wrap: wrap
-}
-
-.tool-btn {
-  flex: 1;
-  min-width: 60px;
-  padding: 0.4rem 0.3rem;
-  background: var(--s2);
-  border: 1px solid var(--border2);
-  color: var(--muted);
-  font-family: 'Space Mono', monospace;
-  font-size: 0.58rem;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-align: center;
-  white-space: nowrap
-}
-
-.tool-btn.active {
-  background: rgba(0, 204, 110, 0.1);
-  border-color: var(--accent);
-  color: var(--accent)
-}
-
-.desktop-only {}
 
 /* ═══════════════════════════════════════════════════════
    RESPONSIVE
@@ -854,14 +852,6 @@ canvas#graphCanvas {
   }
 
   /* cache la carte info sur mobile */
-
-  .mobile-toolbar {
-    display: flex
-  }
-
-  .desktop-only {
-    display: none
-  }
 
   /* Zone de visualisation */
   .sort-area,

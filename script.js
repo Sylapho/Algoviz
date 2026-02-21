@@ -18,7 +18,6 @@ let endCell = { r: 17, c: 17 };
 let isDrawing = false;
 let drawMode = 'wall'; // wall or erase
 let movingStart = false, movingEnd = false;
-let mobileTool = 'wall'; // wall | erase | start | end
 let graphDelay = 20;
 
 // ═══════════════════════════════════════════════════════
@@ -511,36 +510,7 @@ function getCellFromEvent(e) {
 
 function isMobile() { return window.innerWidth <= 640; }
 
-function applyToolAt(cell) {
-    if (!cell) return;
-    if (isMobile()) {
-        if (mobileTool === 'start') {
-            grid[startCell.r][startCell.c] = CELL.EMPTY;
-            startCell = { ...cell };
-            grid[cell.r][cell.c] = CELL.START;
-            drawGrid(); return;
-        }
-        if (mobileTool === 'end') {
-            grid[endCell.r][endCell.c] = CELL.EMPTY;
-            endCell = { ...cell };
-            grid[cell.r][cell.c] = CELL.END;
-            drawGrid(); return;
-        }
-        const mode = mobileTool === 'erase' ? 'erase' : 'wall';
-        if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
-            grid[cell.r][cell.c] = mode === 'wall' ? CELL.WALL : CELL.EMPTY;
-            drawGrid();
-        }
-    } else {
-        if (!isDrawing) return;
-        if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
-            grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
-            drawGrid();
-        }
-    }
-}
-
-// Mouse events (desktop)
+// ── Desktop mouse events ──────────────────────────────
 canvas.addEventListener('mousedown', e => {
     if (graphRunning) return;
     const cell = getCellFromEvent(e);
@@ -575,46 +545,107 @@ canvas.addEventListener('mousemove', e => {
         grid[cell.r][cell.c] = CELL.END;
         drawGrid(); return;
     }
-    applyToolAt(cell);
+    if (!isDrawing) return;
+    if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
+        grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
+        drawGrid();
+    }
 });
 
 window.addEventListener('mouseup', () => { isDrawing = false; movingStart = false; movingEnd = false; });
 
-// Touch events (mobile)
+// ── Mobile touch events with long press ──────────────
+let lpTimer = null, lpCell = null, lpActive = false;
+const lpRing = document.getElementById('lpRing');
+
+function showLpRing(touch) {
+    const rect = canvas.getBoundingClientRect();
+    lpRing.style.left = (touch.clientX - rect.left) + 'px';
+    lpRing.style.top = (touch.clientY - rect.top) + 'px';
+    lpRing.classList.add('active');
+}
+function hideLpRing() { lpRing.classList.remove('active'); }
+
+function startLongPress(e) {
+    const touch = e.touches[0];
+    lpCell = getCellFromEvent(e);
+    if (!lpCell) return;
+    const t = grid[lpCell.r][lpCell.c];
+    // Long press only on start or end cells
+    if (t !== CELL.START && t !== CELL.END) return;
+    showLpRing(touch);
+    lpTimer = setTimeout(() => {
+        lpActive = true;
+        hideLpRing();
+        if (t === CELL.START) movingStart = true;
+        else movingEnd = true;
+        // Vibration tactile si supportée
+        if (navigator.vibrate) navigator.vibrate(40);
+    }, 500);
+}
+
+function cancelLongPress() {
+    clearTimeout(lpTimer);
+    lpTimer = null;
+    hideLpRing();
+}
+
 canvas.addEventListener('touchstart', e => {
     e.preventDefault();
     if (graphRunning) return;
     const cell = getCellFromEvent(e);
     if (!cell) return;
-    if (isMobile()) {
-        // Sur mobile, un tap simple applique l'outil sélectionné
-        applyToolAt(cell);
+    lpActive = false;
+    // Tente un long press
+    startLongPress(e);
+    // Commence à dessiner (annulé si long press déclenché)
+    const t = grid[cell.r][cell.c];
+    if (t !== CELL.START && t !== CELL.END) {
+        drawMode = (t === CELL.WALL) ? 'erase' : 'wall';
         isDrawing = true;
+        grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
+        drawGrid();
     }
 }, { passive: false });
 
 canvas.addEventListener('touchmove', e => {
     e.preventDefault();
-    if (graphRunning || !isDrawing) return;
+    if (graphRunning) return;
     const cell = getCellFromEvent(e);
     if (!cell) return;
-    // En mode départ/arrivée, le glissement déplace aussi
-    applyToolAt(cell);
+    // Si le doigt bouge pendant le long press, annuler
+    if (lpTimer && !lpActive) {
+        cancelLongPress();
+    }
+    // Déplacement départ/arrivée après long press
+    if (movingStart) {
+        grid[startCell.r][startCell.c] = CELL.EMPTY;
+        startCell = { ...cell };
+        grid[cell.r][cell.c] = CELL.START;
+        drawGrid(); return;
+    }
+    if (movingEnd) {
+        grid[endCell.r][endCell.c] = CELL.EMPTY;
+        endCell = { ...cell };
+        grid[cell.r][cell.c] = CELL.END;
+        drawGrid(); return;
+    }
+    // Dessin de murs en glissant
+    if (!isDrawing) return;
+    if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
+        grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
+        drawGrid();
+    }
 }, { passive: false });
 
 canvas.addEventListener('touchend', e => {
     e.preventDefault();
+    cancelLongPress();
     isDrawing = false;
+    movingStart = false;
+    movingEnd = false;
+    lpActive = false;
 }, { passive: false });
-
-// Mobile toolbar
-document.querySelectorAll('.tool-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        mobileTool = btn.dataset.tool;
-        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    });
-});
 
 // Graph algorithms helpers
 const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
@@ -963,10 +994,6 @@ document.getElementById('genMazeBtn').addEventListener('click', () => {
     graphRunning = false; graphPaused = false;
     if (graphResumeResolve) { graphResumeResolve(); graphResumeResolve = null; }
     setGraphBtn('start');
-    // Sur mobile, réduire la grille à une taille optimale pour le tactile
-    if (isMobile() && ROWS > 15) {
-        applyGridSize(13);
-    }
     generateMaze();
 });
 function applyGridSize(v) {

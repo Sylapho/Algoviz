@@ -83,11 +83,11 @@
         <div class="stat-pills">
           <div class="stat-pill cmp">
             <div class="stat-pill-val" id="compCount">0</div>
-            <div class="stat-pill-label">Comp.</div>
+            <div class="stat-pill-label">Comparaisons</div>
           </div>
           <div class="stat-pill swp">
             <div class="stat-pill-val" id="swapCount">0</div>
-            <div class="stat-pill-label">Éch.</div>
+            <div class="stat-pill-label">Échanges</div>
           </div>
           <div class="stat-pill ms">
             <div class="stat-pill-val" id="msCount">—</div>
@@ -101,10 +101,10 @@
         <div class="status-msg" id="sortStatusMsg">Prêt — Appuie sur Start</div>
         <div class="legend">
           <div class="leg">
-            <div class="leg-dot leg-cmp"></div>Comp.
+            <div class="leg-dot leg-cmp"></div>Comparaisons
           </div>
           <div class="leg">
-            <div class="leg-dot leg-swp"></div>Éch.
+            <div class="leg-dot leg-swp"></div>Échanges
           </div>
           <div class="leg">
             <div class="leg-dot leg-piv"></div>Pivot
@@ -146,10 +146,11 @@
         </div>
       </div>
       <div class="sidebar-section">
-        <div class="wall-info desktop-only">
+        <div class="wall-info">
           🟩 Départ &nbsp; 🟥 Arrivée<br>
           🖱️ Clic + glisser pour murs<br>
-          <span class="shift-hint">Shift+Clic</span> pour déplacer départ/arrivée
+          <span class="shift-hint">Shift+Clic</span> pour déplacer (desktop)<br>
+          <span class="shift-hint mobile-hint">Long press</span> pour déplacer (mobile)
         </div>
       </div>
       <div class="sidebar-section">
@@ -176,15 +177,9 @@
       <div class="viz-header">
         <div class="viz-title">// grille interactive — clique pour dessiner des murs</div>
       </div>
-      <!-- Barre d'outils mobile -->
-      <div class="mobile-toolbar" id="mobileToolbar">
-        <button class="tool-btn active" data-tool="wall">🧱 Mur</button>
-        <button class="tool-btn" data-tool="erase">🧹 Gomme</button>
-        <button class="tool-btn" data-tool="start">🟩 Départ</button>
-        <button class="tool-btn" data-tool="end">🟥 Arrivée</button>
-      </div>
       <div class="graph-canvas-wrap">
         <canvas id="graphCanvas"></canvas>
+        <div class="long-press-ring" id="lpRing"></div>
       </div>
       <div class="status-bar">
         <div class="status-dot" id="graphStatusDot"></div>

@@ -396,7 +396,8 @@ input.num-input::-webkit-outer-spin-button {
 .sort-area {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 2rem
+  padding: 1.5rem 2rem;
+  flex: 1
 }
 
 .viz-header {
@@ -434,7 +435,7 @@ input.num-input::-webkit-outer-spin-button {
 
 .stat-pill-label {
   font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
+  font-size: 0.55rem;
   color: var(--muted);
   letter-spacing: 0.1em;
   text-transform: uppercase
@@ -563,7 +564,7 @@ input.num-input::-webkit-outer-spin-button {
   align-items: center;
   gap: 0.35rem;
   font-family: 'Space Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.55rem;
   color: var(--muted);
   letter-spacing: 0.05em;
   text-transform: uppercase
@@ -720,4 +721,206 @@ canvas#graphCanvas {
 
 :root.light .btn.primary:hover {
   box-shadow: 0 0 16px rgba(0, 122, 68, 0.25)
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+/* Tablette (≤ 900px) : sidebar plus étroite */
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 200px 1fr
+  }
+
+  .nav-tab {
+    padding: 0.5rem 1rem
+  }
+
+  .brand-badge {
+    display: none
+  }
+
+  .stat-pills {
+    gap: 1rem
+  }
+
+  .stat-pill-val {
+    font-size: 1.3rem
+  }
+
+  .sort-area,
+  .graph-area {
+    padding: 1rem
+  }
+
+  .graph-canvas-wrap {
+    min-height: 300px
+  }
+}
+
+/* Mobile (≤ 640px) : layout vertical, sidebar devient un panneau en bas */
+@media (max-width: 640px) {
+
+  /* Header compact */
+  header {
+    padding: 0.8rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.6rem
+  }
+
+  .brand-name {
+    font-size: 1.1rem
+  }
+
+  .header-right {
+    gap: 0.5rem
+  }
+
+  .theme-toggle {
+    font-size: 0.55rem;
+    padding: 0.3rem 0.5rem
+  }
+
+  .nav-tab {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.6rem
+  }
+
+  /* App passe en colonne : contenu en haut, sidebar en bas */
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    height: calc(100vh - 57px);
+  }
+
+  .app.visible {
+    display: flex;
+    flex-direction: column
+  }
+
+  /* Sidebar horizontale scrollable en bas */
+  .sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    max-height: 220px;
+  }
+
+  .sidebar-section {
+    min-width: 160px;
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .sidebar-section--grow {
+    display: none
+  }
+
+  /* cache la carte info sur mobile */
+
+  /* Zone de visualisation */
+  .sort-area,
+  .graph-area {
+    padding: 0.8rem;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .bars-wrap {
+    min-height: 180px;
+    flex: 1
+  }
+
+  .graph-canvas-wrap {
+    min-height: 0;
+    flex: 1
+  }
+
+  /* Stats + légende */
+  .viz-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem
+  }
+
+  .stat-pills {
+    gap: 0.8rem
+  }
+
+  .stat-pill-val {
+    font-size: 1.1rem
+  }
+
+  .legend {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-left: 0;
+    margin-top: 0.3rem
+  }
+
+  .status-bar {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.4rem 0;
+    margin-top: 0.2rem
+  }
+
+  .status-msg {
+    font-size: 0.58rem
+  }
+
+  /* Boutons */
+  .btn {
+    font-size: 0.65rem;
+    padding: 0.5rem
+  }
+
+  .btn-spacer {
+    height: 0.3rem
+  }
+
+  /* Algo buttons plus compacts */
+  .algo-btn {
+    font-size: 0.72rem;
+    padding: 0.45rem 0.6rem
+  }
+
+  .algo-btn .badge {
+    display: none
+  }
+
+  /* Sliders */
+  .ctrl-label {
+    font-size: 0.58rem
+  }
+
+  input.num-input {
+    width: 38px;
+    font-size: 0.62rem
+  }
+}
+
+/* Très petit (≤ 380px) */
+@media (max-width: 380px) {
+  .sidebar {
+    max-height: 190px
+  }
+
+  .sidebar-section {
+    min-width: 140px
+  }
+
+  .stat-pill-val {
+    font-size: 0.95rem
+  }
+
+  .viz-title {
+    display: none
+  }
 }

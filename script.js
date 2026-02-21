@@ -942,5 +942,13 @@ sortDelay = Math.round(110 / 5);
 initGrid();
 
 window.addEventListener('resize', () => {
-    if (document.getElementById('graphApp').classList.contains('visible')) resizeCanvas();
+    if (document.getElementById('graphApp').classList.contains('visible')) {
+        setTimeout(resizeCanvas, 50); // léger délai pour que le layout soit recalculé d'abord
+    }
+});
+// Gère le changement d'orientation sur mobile
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        if (document.getElementById('graphApp').classList.contains('visible')) resizeCanvas();
+    }, 200);
 });

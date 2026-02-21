@@ -691,6 +691,97 @@ canvas#graphCanvas {
   }
 }
 
+/* Info button (mobile only) */
+.info-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--accent);
+  font-size: 0.75rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s;
+  flex-shrink: 0
+}
+
+.info-btn:hover {
+  background: rgba(0, 204, 110, 0.1);
+  border-color: var(--accent)
+}
+
+.mobile-only {
+  display: none
+}
+
+@media(max-width:640px) {
+  .mobile-only {
+    display: flex
+  }
+
+  .info-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center
+  }
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal-overlay.open {
+  display: flex
+}
+
+.modal-box {
+  position: relative;
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 1.2rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 2px;
+  transition: color 0.15s;
+}
+
+.modal-close:hover {
+  color: var(--text)
+}
+
+.modal-box .info-card {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.75rem
+}
+
 /* Theme toggle */
 .theme-toggle {
   background: none;

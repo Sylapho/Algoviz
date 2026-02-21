@@ -352,6 +352,7 @@ document.querySelectorAll('[data-algo]').forEach(btn => {
         btn.classList.add('active');
         currentSortAlgo = btn.dataset.algo;
         document.getElementById('sortInfo').innerHTML = sortInfoMap[currentSortAlgo];
+        updateSortInfoBtns();
         genArray(parseInt(document.getElementById('sizeSlider').value));
     });
 });
@@ -1020,6 +1021,42 @@ document.getElementById('gSpeedInput').addEventListener('blur', e => applyGraphS
 document.getElementById('gSpeedInput').addEventListener('keydown', e => { if (e.key === 'Enter') applyGraphSpeed(e.target.value); });
 
 // ═══════════════════════════════════════════════════════
+// INFO MODAL
+// ═══════════════════════════════════════════════════════
+const infoModal = document.getElementById('infoModal');
+const modalContent = document.getElementById('modalContent');
+
+function openModal(html) {
+    modalContent.innerHTML = html;
+    infoModal.classList.add('open');
+}
+function closeModal() {
+    infoModal.classList.remove('open');
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+infoModal.addEventListener('click', e => { if (e.target === infoModal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+const slowAlgos = ['bubble', 'selection', 'insertion'];
+
+function updateSortInfoBtns() {
+    const isSlow = slowAlgos.includes(currentSortAlgo);
+    document.getElementById('sortInfoBtn').style.opacity = isSlow ? '1' : '0.2';
+    document.getElementById('sortInfoBtn2').style.opacity = isSlow ? '0.2' : '1';
+}
+
+document.getElementById('sortInfoBtn').addEventListener('click', () => {
+    openModal(document.getElementById('sortInfo').innerHTML);
+});
+document.getElementById('sortInfoBtn2').addEventListener('click', () => {
+    openModal(document.getElementById('sortInfo').innerHTML);
+});
+document.getElementById('graphInfoBtn').addEventListener('click', () => {
+    openModal(document.getElementById('graphInfo').innerHTML);
+});
+
+// ═══════════════════════════════════════════════════════
 // THEME TOGGLE
 // ═══════════════════════════════════════════════════════
 document.getElementById('themeToggle').addEventListener('click', () => {
@@ -1032,6 +1069,7 @@ document.getElementById('themeToggle').addEventListener('click', () => {
 // INIT
 // ═══════════════════════════════════════════════════════
 genArray(50);
+updateSortInfoBtns();
 sortDelay = Math.round(110 / 5);
 
 // Pre-initialize grid so it's ready when user switches tab

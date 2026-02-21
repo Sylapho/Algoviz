@@ -12,7 +12,6 @@
 </head>
 
 <body>
-
   <header>
     <div class="brand">
       <div class="brand-name">Algo<span>Viz</span></div>
@@ -31,13 +30,15 @@
   <div class="app visible" id="sortApp">
     <div class="sidebar">
       <div class="sidebar-section">
-        <div class="sidebar-label">Algorithmes lents</div>
+        <div class="sidebar-label">Algorithmes lents<button class="info-btn mobile-only" id="sortInfoBtn">ⓘ</button>
+        </div>
         <button class="algo-btn active" data-algo="bubble">Tri à Bulles <span class="badge">O(n²)</span></button>
         <button class="algo-btn" data-algo="selection">Tri Sélection <span class="badge">O(n²)</span></button>
         <button class="algo-btn" data-algo="insertion">Tri Insertion <span class="badge">O(n²)</span></button>
       </div>
       <div class="sidebar-section">
-        <div class="sidebar-label">Algorithmes rapides</div>
+        <div class="sidebar-label">Algorithmes rapides<button class="info-btn mobile-only" id="sortInfoBtn2">ⓘ</button>
+        </div>
         <button class="algo-btn" data-algo="merge">Tri Fusion <span class="badge">O(n log n)</span></button>
         <button class="algo-btn" data-algo="quick">Tri Rapide <span class="badge">O(n log n)</span></button>
         <button class="algo-btn" data-algo="heap">Tri par Tas <span class="badge">O(n log n)</span></button>
@@ -104,7 +105,7 @@
             <div class="leg-dot leg-cmp"></div>Comparaisons
           </div>
           <div class="leg">
-            <div class="leg-dot leg-swp"></div>Échanges
+            <div class="leg-dot leg-swp"></div>Éch.
           </div>
           <div class="leg">
             <div class="leg-dot leg-piv"></div>Pivot
@@ -121,7 +122,7 @@
   <div class="app" id="graphApp">
     <div class="sidebar">
       <div class="sidebar-section">
-        <div class="sidebar-label">Algorithme</div>
+        <div class="sidebar-label">Algorithme<button class="info-btn mobile-only" id="graphInfoBtn">ⓘ</button></div>
         <button class="algo-btn active" data-galgo="bfs">BFS <span class="badge">O(V+E)</span></button>
         <button class="algo-btn" data-galgo="dfs">DFS <span class="badge">O(V+E)</span></button>
         <button class="algo-btn" data-galgo="dijkstra">Dijkstra <span class="badge">O(E log V)</span></button>
@@ -196,6 +197,14 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ INFO MODAL ═══════════════ -->
+  <div class="modal-overlay" id="infoModal">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="info-card" id="modalContent"></div>
     </div>
   </div>
 

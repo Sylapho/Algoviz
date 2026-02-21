@@ -620,6 +620,46 @@ canvas#graphCanvas {
   border-radius: 2px
 }
 
+/* Layout helpers */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem
+}
+
+.btn-spacer {
+  height: 0.5rem
+}
+
+.sidebar-section--grow {
+  flex: 1
+}
+
+.shift-hint {
+  color: var(--a4)
+}
+
+.graph-stat--mt {
+  margin-top: 0.4rem
+}
+
+/* Legend dot colors */
+.leg-cmp {
+  background: #ff3366
+}
+
+.leg-swp {
+  background: #ffaa00
+}
+
+.leg-piv {
+  background: #b06fff
+}
+
+.leg-srt {
+  background: #3344ff
+}
+
 /* Theme toggle */
 .theme-toggle {
   background: none;

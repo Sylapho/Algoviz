@@ -12,13 +12,12 @@
 </head>
 
 <body>
-
   <header>
     <div class="brand">
       <div class="brand-name">Algo<span>Viz</span></div>
       <div class="brand-badge">v2.0</div>
     </div>
-    <div style="display:flex;align-items:center;gap:1rem">
+    <div class="header-right">
       <button class="theme-toggle" id="themeToggle">☀ Mode clair</button>
       <div class="nav-tabs">
         <button class="nav-tab active" data-view="sort">⬛ Tri</button>
@@ -66,15 +65,16 @@
           <button class="btn" id="sortResetBtn">↺ Reset</button>
           <button class="btn primary" id="sortStartBtn">▶ Start</button>
         </div>
-        <div style="height:0.5rem"></div>
+        <div class="btn-spacer"></div>
         <div class="btn-row">
           <button class="btn stop" id="sortStopBtn" disabled>■ Stop</button>
           <button class="btn" id="sortShuffleBtn">⇌ Mélanger</button>
         </div>
       </div>
-      <div class="sidebar-section" style="flex:1">
+      <div class="sidebar-section sidebar-section--grow">
         <div class="info-card" id="sortInfo"><strong>Tri à Bulles</strong> — Compare les éléments adjacents et les
-          échange si nécessaire. Répète jusqu'à ce que le tableau soit trié.</div>
+          échange
+          si nécessaire. Répète jusqu'à ce que le tableau soit trié.</div>
       </div>
     </div>
     <div class="sort-area">
@@ -101,16 +101,16 @@
         <div class="status-msg" id="sortStatusMsg">Prêt — Appuie sur Start</div>
         <div class="legend">
           <div class="leg">
-            <div class="leg-dot" style="background:#ff3366"></div>Comp.
+            <div class="leg-dot leg-cmp"></div>Comp.
           </div>
           <div class="leg">
-            <div class="leg-dot" style="background:#ffaa00"></div>Éch.
+            <div class="leg-dot leg-swp"></div>Éch.
           </div>
           <div class="leg">
-            <div class="leg-dot" style="background:#69fc7d"></div>Pivot
+            <div class="leg-dot leg-piv"></div>Pivot
           </div>
           <div class="leg">
-            <div class="leg-dot" style="background:#3344ff"></div>Trié
+            <div class="leg-dot leg-srt"></div>Trié
           </div>
         </div>
       </div>
@@ -149,7 +149,7 @@
         <div class="wall-info">
           🟩 Départ &nbsp; 🟥 Arrivée<br>
           🖱️ Clic + glisser pour murs<br>
-          <span style="color:var(--a4)">Shift+Clic</span> pour déplacer départ/arrivée
+          <span class="shift-hint">Shift+Clic</span> pour déplacer départ/arrivée
         </div>
       </div>
       <div class="sidebar-section">
@@ -157,7 +157,7 @@
           <button class="btn" id="graphResetBtn">↺ Reset</button>
           <button class="btn primary" id="graphStartBtn">▶ Start</button>
         </div>
-        <div style="height:0.5rem"></div>
+        <div class="btn-spacer"></div>
         <div class="btn-row">
           <button class="btn stop" id="graphStopBtn" disabled>■ Stop</button>
           <button class="btn full" id="genMazeBtn">⊞ Labyrinthe</button>
@@ -165,9 +165,9 @@
       </div>
       <div class="sidebar-section">
         <div class="graph-stat">Nœuds visités: <span id="nodesVisited">0</span></div>
-        <div class="graph-stat" style="margin-top:0.4rem">Longueur chemin: <span id="pathLen">—</span></div>
+        <div class="graph-stat graph-stat--mt">Longueur chemin: <span id="pathLen">—</span></div>
       </div>
-      <div class="sidebar-section" style="flex:1">
+      <div class="sidebar-section sidebar-section--grow">
         <div class="info-card" id="graphInfo"><strong>BFS</strong> — Parcours en largeur. Explore les voisins couche par
           couche. Garantit le chemin le plus court sur graphe non pondéré.</div>
       </div>
@@ -184,13 +184,13 @@
         <div class="status-msg" id="graphStatusMsg">Prêt — Dessine des murs puis clique Start</div>
         <div class="legend">
           <div class="leg">
-            <div class="leg-dot" style="background:#3344ff"></div>Exploré
+            <div class="leg-dot leg-srt"></div>Exploré
           </div>
           <div class="leg">
-            <div class="leg-dot" style="background:#ffaa00"></div>Chemin
+            <div class="leg-dot leg-swp"></div>Chemin
           </div>
           <div class="leg">
-            <div class="leg-dot" style="background:#ff3366"></div>Front.
+            <div class="leg-dot leg-cmp"></div>Front.
           </div>
         </div>
       </div>

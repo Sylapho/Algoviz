@@ -352,6 +352,7 @@ document.querySelectorAll('[data-algo]').forEach(btn => {
         btn.classList.add('active');
         currentSortAlgo = btn.dataset.algo;
         document.getElementById('sortInfo').innerHTML = sortInfoMap[currentSortAlgo];
+        updateSortInfoBtns();
         genArray(parseInt(document.getElementById('sizeSlider').value));
     });
 });
@@ -508,6 +509,9 @@ function getCellFromEvent(e) {
     return { r, c };
 }
 
+function isMobile() { return window.innerWidth <= 640; }
+
+// ── Desktop mouse events ──────────────────────────────
 canvas.addEventListener('mousedown', e => {
     if (graphRunning) return;
     const cell = getCellFromEvent(e);
@@ -550,6 +554,99 @@ canvas.addEventListener('mousemove', e => {
 });
 
 window.addEventListener('mouseup', () => { isDrawing = false; movingStart = false; movingEnd = false; });
+
+// ── Mobile touch events with long press ──────────────
+let lpTimer = null, lpCell = null, lpActive = false;
+const lpRing = document.getElementById('lpRing');
+
+function showLpRing(touch) {
+    const rect = canvas.getBoundingClientRect();
+    lpRing.style.left = (touch.clientX - rect.left) + 'px';
+    lpRing.style.top = (touch.clientY - rect.top) + 'px';
+    lpRing.classList.add('active');
+}
+function hideLpRing() { lpRing.classList.remove('active'); }
+
+function startLongPress(e) {
+    const touch = e.touches[0];
+    lpCell = getCellFromEvent(e);
+    if (!lpCell) return;
+    const t = grid[lpCell.r][lpCell.c];
+    // Long press only on start or end cells
+    if (t !== CELL.START && t !== CELL.END) return;
+    showLpRing(touch);
+    lpTimer = setTimeout(() => {
+        lpActive = true;
+        hideLpRing();
+        if (t === CELL.START) movingStart = true;
+        else movingEnd = true;
+        // Vibration tactile si supportée
+        if (navigator.vibrate) navigator.vibrate(40);
+    }, 500);
+}
+
+function cancelLongPress() {
+    clearTimeout(lpTimer);
+    lpTimer = null;
+    hideLpRing();
+}
+
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (graphRunning) return;
+    const cell = getCellFromEvent(e);
+    if (!cell) return;
+    lpActive = false;
+    // Tente un long press
+    startLongPress(e);
+    // Commence à dessiner (annulé si long press déclenché)
+    const t = grid[cell.r][cell.c];
+    if (t !== CELL.START && t !== CELL.END) {
+        drawMode = (t === CELL.WALL) ? 'erase' : 'wall';
+        isDrawing = true;
+        grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
+        drawGrid();
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (graphRunning) return;
+    const cell = getCellFromEvent(e);
+    if (!cell) return;
+    // Si le doigt bouge pendant le long press, annuler
+    if (lpTimer && !lpActive) {
+        cancelLongPress();
+    }
+    // Déplacement départ/arrivée après long press
+    if (movingStart) {
+        grid[startCell.r][startCell.c] = CELL.EMPTY;
+        startCell = { ...cell };
+        grid[cell.r][cell.c] = CELL.START;
+        drawGrid(); return;
+    }
+    if (movingEnd) {
+        grid[endCell.r][endCell.c] = CELL.EMPTY;
+        endCell = { ...cell };
+        grid[cell.r][cell.c] = CELL.END;
+        drawGrid(); return;
+    }
+    // Dessin de murs en glissant
+    if (!isDrawing) return;
+    if (grid[cell.r][cell.c] !== CELL.START && grid[cell.r][cell.c] !== CELL.END) {
+        grid[cell.r][cell.c] = drawMode === 'wall' ? CELL.WALL : CELL.EMPTY;
+        drawGrid();
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    cancelLongPress();
+    isDrawing = false;
+    movingStart = false;
+    movingEnd = false;
+    lpActive = false;
+}, { passive: false });
 
 // Graph algorithms helpers
 const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
@@ -924,6 +1021,42 @@ document.getElementById('gSpeedInput').addEventListener('blur', e => applyGraphS
 document.getElementById('gSpeedInput').addEventListener('keydown', e => { if (e.key === 'Enter') applyGraphSpeed(e.target.value); });
 
 // ═══════════════════════════════════════════════════════
+// INFO MODAL
+// ═══════════════════════════════════════════════════════
+const infoModal = document.getElementById('infoModal');
+const modalContent = document.getElementById('modalContent');
+
+function openModal(html) {
+    modalContent.innerHTML = html;
+    infoModal.classList.add('open');
+}
+function closeModal() {
+    infoModal.classList.remove('open');
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+infoModal.addEventListener('click', e => { if (e.target === infoModal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+const slowAlgos = ['bubble', 'selection', 'insertion'];
+
+function updateSortInfoBtns() {
+    const isSlow = slowAlgos.includes(currentSortAlgo);
+    document.getElementById('sortInfoBtn').style.opacity = isSlow ? '1' : '0.2';
+    document.getElementById('sortInfoBtn2').style.opacity = isSlow ? '0.2' : '1';
+}
+
+document.getElementById('sortInfoBtn').addEventListener('click', () => {
+    openModal(document.getElementById('sortInfo').innerHTML);
+});
+document.getElementById('sortInfoBtn2').addEventListener('click', () => {
+    openModal(document.getElementById('sortInfo').innerHTML);
+});
+document.getElementById('graphInfoBtn').addEventListener('click', () => {
+    openModal(document.getElementById('graphInfo').innerHTML);
+});
+
+// ═══════════════════════════════════════════════════════
 // THEME TOGGLE
 // ═══════════════════════════════════════════════════════
 document.getElementById('themeToggle').addEventListener('click', () => {
@@ -936,11 +1069,20 @@ document.getElementById('themeToggle').addEventListener('click', () => {
 // INIT
 // ═══════════════════════════════════════════════════════
 genArray(50);
+updateSortInfoBtns();
 sortDelay = Math.round(110 / 5);
 
 // Pre-initialize grid so it's ready when user switches tab
 initGrid();
 
 window.addEventListener('resize', () => {
-    if (document.getElementById('graphApp').classList.contains('visible')) resizeCanvas();
+    if (document.getElementById('graphApp').classList.contains('visible')) {
+        setTimeout(resizeCanvas, 50); // léger délai pour que le layout soit recalculé d'abord
+    }
+});
+// Gère le changement d'orientation sur mobile
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        if (document.getElementById('graphApp').classList.contains('visible')) resizeCanvas();
+    }, 200);
 });
